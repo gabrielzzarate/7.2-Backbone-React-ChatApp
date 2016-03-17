@@ -6,6 +6,8 @@ $icon-font-path: '../../node_modules/bootstrap-sass/assets/fonts/bootstrap/';
 @import '../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap';
 
 
+//global styles
+
 *,
 *::before,
 *::after {
@@ -38,8 +40,9 @@ button {
     border-radius: 3px;
 
 }
-
-/// user login
+////////////////////
+/// login styles///
+//////////////////
 body {
     width: 100%;
     height: 100%;
@@ -50,26 +53,39 @@ body {
     padding-bottom: 0;
     background-image: url('https://images.unsplash.com/photo-1454165205744-3b78555e5572?crop=entropy&dpr=2&fit=crop&fm=jpg&h=675&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1300');
     background-size: cover;
-    background-color: #512e92;
+    //background-color: #512e92;
 }
 #intro-panel {
-    h1 {
 
-        width: 500px;
-        font-size: 60px;
-        line-height: 72px;
-        letter-spacing: -1px;
-        color: #fff;
-        font-family: 'DP', sans-serif;
-    }
+
+
 }
 
 #intro-box {
     margin: 80px auto;
-    width: 320px;
+    width: 400px;
     padding: 40px 60px;
-    background-color: #fff;
+    background-color: rgb(39, 80, 109);
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
+    border-radius: 2%;
+    border: 1px solid black;
+
+    .intro-heading {
+        font-size: 60px;
+        line-height: 72px;
+        letter-spacing: -1px;
+        color: rgb(233, 234, 237);
+        font-family: 'DP', sans-serif;
+        font-weight: bold;
+    }
+    .intro-sub-heading {
+        letter-spacing: -1px;
+        color: rgb(233, 234, 237);
+        font-family: 'DP', sans-serif;
+        font-weight: bold;
+
+
+    }
 
     .login-box-header {
         width: 100%;
@@ -89,10 +105,18 @@ body {
             }
         }
 
+
     }
 }
+.usernameLabel {
+    margin: 5px;
+    font-size: 15px;
+}
 
-
+.login-button {
+    margin: 5px;
+    background-color: rgb(233, 234, 237);
+}
 
 
 form, p, span {
@@ -107,12 +131,15 @@ a {
 
     a:hover { text-decoration:underline; }
 
-// #wrapper, #loginform {
-//     margin:0 auto;
-//     padding-bottom:25px;
-//     background:#EBF4FB;
-//     width:504px;
-//     border:1px solid #ACD8F0; }
+#wrapper, #loginform {
+
+    padding-bottom:25px;
+    background:rgb(39, 80, 109);
+    border:1px solid #ACD8F0;
+
+
+
+}
 
 #loginform { padding-top:18px; }
 
@@ -120,27 +147,93 @@ a {
 
 #chatbox {
     text-align:left;
-    margin:0 auto;
+
     margin-bottom:25px;
+    margin-top: 10px;
     padding:10px;
-    background:#fff;
-    height:270px;
-    width:430px;
-    border:1px solid #ACD8F0;
-    overflow:auto; }
+    background:rgb(233, 234, 237);
+    overflow-y: scroll;
+    max-height: 375px;
+
+    border:1px solid black;
+    overflow:auto;
+}
 
 #usermsg {
-    width:395px;
+
     border:1px solid #ACD8F0; }
 
-#submit { width: 60px; }
 
-.error { color: #ff0000; }
+
+
 
 #menu { padding:12.5px 25px 12.5px 25px; }
 
-.welcome { float:left; }
+.welcome {
+    float:left;
+    color: rgb(250, 250, 250);
+    font-weight: bold;
 
-.logout { float:right; }
+}
+
+.logout {
+    float:right;
+    a{
+     color: red;
+    }
+
+}
 
 .msgln { margin:0 0 2px 0; }
+
+
+.submit-btn {
+    margin: 5px;
+    border: 1px solid rgb(233, 234, 237);
+}
+.messageList {
+    background: #e5e5e5;
+
+
+
+
+}
+.message {
+  background: white;
+  padding: 10px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(black, 0.2);
+
+
+  .messageText {
+    font-size: 1rem;
+
+    margin: 0 0 0.2rem 0;
+  }
+  .messageTime {
+    font-size: 0.9rem;
+    color: #ccc;
+  }
+
+}
+.avatar {
+    width: 40px;
+    position: relative;
+    img{
+      display: block; // triangle position
+      width: 100%;
+
+    }
+    &:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border: 5px solid white;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+      box-shadow: 1px 1px 2px rgba(black, 0.2);
+    }
+}
