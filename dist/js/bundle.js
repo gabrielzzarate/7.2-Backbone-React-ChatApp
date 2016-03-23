@@ -7,8 +7,7 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 require('backbone-react-component');
 var Firebase = require('firebase');
-var myRootRef = new Firebase('https://popping-torch-6591.firebaseio.com/');
-require('reactfire');
+var ReactFireMixin = require('reactfire');
 
 //local
 var models = require('../models/message.js');
@@ -17,30 +16,39 @@ var RouterMixin = require('./mixins.js');
 
 // component that holds the state of the application
 var ChatApp = React.createClass({displayName: "ChatApp",
-	mixins: [Backbone.React.Component.mixin],
+	mixins: [Backbone.React.Component.mixin, ReactFireMixin],
 
-	componentDidMount: function() {
-		setInterval(function(){
-				this.props.collection.fetch();
-		}.bind(this), 2000);
+	componentWillMount: function() {
+		//sets the endpoint in Firebase database
+		this.bindAsArray(new Firebase("https://popping-torch-6591.firebaseio.com/messages/"), "messages");
+
+
+		// setInterval(function(){
+		// 		this.props.collection.fetch();
+		// }.bind(this), 2000);
 
 
 	},
+	handleSubmit: function(text){
+
+  		this.firebaseRefs["messages"].push({ text: text });
+  		this.setState({text: ""});
+  },
 
 	render: function() {
 
 		return (
 			React.createElement("div", {id: "wrapper", className: "chatApp col-md-6 col-md-offset-1"}, 
 					React.createElement("div", {id: "menu"}, 
-						React.createElement("p", {className: "welcome"}, "Hello ", this.props.model.get('username'), ", welcome to DevChat!"), 
+						React.createElement("p", {className: "welcome"}, "Hello ", localStorage.getItem('username'), ", welcome to DevChat!"), 
         		React.createElement("p", {className: "logout"}, React.createElement("a", {id: "exit", href: "#"}, "Logout"))
         	), 
 
 
 					React.createElement("div", {id: "chatbox", className: "col-md-10 col-md-offset-1"}, 
-						React.createElement(MessageList, {messages: this.props.collection})
+						React.createElement(MessageList, {messages: this.props.collection, fireBaseMessages: this.state.messages})
 					), 
-					React.createElement(ChatForm, {model: this.props.model})
+					React.createElement(ChatForm, {model: this.props.model, handleSubmit: this.handleSubmit})
 			)
 
 		);
@@ -51,12 +59,14 @@ var ChatApp = React.createClass({displayName: "ChatApp",
 // the message ul
 
 var MessageList = React.createClass({displayName: "MessageList",
-	mixins: [Backbone.React.Component.mixin],
+	mixins: [Backbone.React.Component.mixin, ReactFireMixin],
 
 	render: function() {
-			var messageDetails = this.props.messages.map(function(msg) {
-						//var className = msg.attributes.username == this.props.msg.get('username')? 'right': 'left';
-            return (React.createElement(Message, {key: msg.cid, msg: msg}));
+
+			var messageDetails = this.props.fireBaseMessages.map(function(message) {
+				console.log("message" , message);
+
+            return (React.createElement(Message, {key: message.cid, message: message}));
 
         }.bind(this));
         return (
@@ -71,18 +81,15 @@ var MessageList = React.createClass({displayName: "MessageList",
 // the message li
 
 var Message = React.createClass({displayName: "Message",
-	mixins: [Backbone.React.Component.mixin],
+	mixins: [Backbone.React.Component.mixin, ReactFireMixin],
 	render: function() {
-			var messages = this.props.msg;
+
 
 			return (
+
 				 React.createElement("li", {className: "message"}, 
-				 				React.createElement("div", {className: "avatar"}, 
-				 				    React.createElement("span", {className: "userAvatar"}, " ", React.createElement("img", {src: this.props.msg.get("user_avatar")}), " ")
-				 				), 
-                React.createElement("span", {className: "messageTime"}, " at ", this.props.msg.get('time')), 
-                React.createElement("span", {className: "username"}, " ", this.props.msg.get('username'), " said: "), 
-                React.createElement("span", {className: "messageText"}, " ", this.props.msg.get('content'))
+
+                React.createElement("span", {className: "messageText"}, " ", this.props.message.text)
          	)
 		);
 	}
@@ -91,31 +98,45 @@ var Message = React.createClass({displayName: "Message",
 // the form where message is written
 
 var ChatForm = React.createClass({displayName: "ChatForm",
-		mixins: [Backbone.React.Component.mixin],
+		mixins: [Backbone.React.Component.mixin, ReactFireMixin],
+		getInitialState: function(){
+    return {
+      text: ''
+    };
+  },
 		handleSubmit: function(e){
 			e.preventDefault();
-			var date = new Date();
-			var chatData = {
+			var text = this.state.text;
+			this.props.handleSubmit(text);
+  		this.setState({text: ""});
 
-				content: $('#usermsg').val(),
-				username: this.props.model.get("username"),
-				time: date.getHours() + ":" + ("0" + date.getMinutes()).slice(-2),
-				user_avatar: this.props.model.get("user_avatar")
-			};
+			// e.preventDefault();
+			// var date = new Date();
+			// var chatData = {
+
+			// 	content: $('#usermsg').val(),
+			// 	username: this.props.model.get("username"),
+			// 	time: date.getHours() + ":" + ("0" + date.getMinutes()).slice(-2),
+			// 	user_avatar: this.props.model.get("user_avatar")
 
 
 
-			console.log(chatData);
 
-			this.getCollection().create(chatData);
-			$('#usermsg').val('');
+			// console.log(chatData);
 
+			// this.getCollection().create(chatData);
+			// $('#usermsg').val('');
+
+		},
+		handleText: function(e){
+			e.preventDefault();
+			this.setState({text: e.target.value});
 		},
 
 		render: function() {
 			return (
 				React.createElement("form", {onSubmit: this.handleSubmit, name: "message"}, 
-						React.createElement("input", {name: "usermsg", type: "text", id: "usermsg", size: "63"}), 
+						React.createElement("input", {onChange: this.handleText, value: this.state.text, name: "usermsg", type: "text", id: "usermsg", size: "63"}), 
 						React.createElement("button", {name: "submitmsg", className: "btn btn-success submit-btn", type: "submit", id: "submitmsg"}, "Send")
 				)
 			);
@@ -161,23 +182,38 @@ var LoginComponent = React.createClass({displayName: "LoginComponent",
       } else {
         console.log("Authenticated successfully with payload:", authData);
         auth = authData.token;
+        localStorage.setItem('username', authData.password.email);
         Backbone.history.navigate("chat/" , {trigger: true});
       }
     });
-
-
 	},
-	getData: function(event){
-		event.preventDefault();
+	handleNewUser: function(e){
+		e.preventDefault();
+		var newEmailInput = $('#newEmailInput').val();
+		var newPasswordInput = $('#newPasswordInput').val();
 
-    $.ajax('https://popping-torch-6591.firebaseio.com/menu.json?auth=' + auth).then(function(data){
-      console.log(data);
+		ref.createUser({"email": newEmailInput, "password": newPasswordInput}, function(error, userData) {
+      if (error) {
+        switch (error.code) {
+          case "EMAIL_TAKEN":
+            console.log("The new user account cannot be created because the email is already in use.");
+            break;
+          case "INVALID_EMAIL":
+            console.log("The specified email is not a valid email.");
+            break;
+          default:
+            console.log("Error creating user:", error);
+        }
+      } else {
+        console.log("Successfully created user account with uid:", userData.uid);
+      }
     });
 
 	},
 	render: function() {
 
 		return (
+			React.createElement("div", {className: "login-screen"}, 
 			React.createElement("div", {id: "login", className: "container-fluid"}, 
 		      React.createElement("div", {id: "intro-panel"}
 
@@ -185,7 +221,7 @@ var LoginComponent = React.createClass({displayName: "LoginComponent",
 		      React.createElement("div", {id: "intro-box"}, 
 		        React.createElement("div", {className: "login-box-header"}, 
 		          React.createElement("span", {className: "logo"}, React.createElement("i", {className: "fa fa-commenting fa-5x"})), 
-		          React.createElement("h1", {className: "intro-heading"}, "DevChat "), 
+		          React.createElement("h1", {className: "intro-heading"}, "DevChat"), 
 		        	React.createElement("h4", {className: "intro-sub-heading"}, "a ChatRoom for Junior Developers")
 		        ), 
 		        React.createElement("div", {id: "login-view"}, 
@@ -194,12 +230,26 @@ var LoginComponent = React.createClass({displayName: "LoginComponent",
 		              React.createElement("label", {className: "usernameLabel", htmlFor: "userInput"}, "Enter Username"), 
 		              React.createElement("input", {type: "text", id: "emailInput", className: "form-control", name: "email", placeholder: "email address"}), 
 		              React.createElement("input", {type: "password", id: "passwordInput", className: "form-control", name: "password", placeholder: "password"}), 
-		              React.createElement("button", {className: "btn btn-default login-button"}, "LOG IN"), 
-		              React.createElement("button", {onClick: this.getData, className: "btn btn-success"}, "Get Data")
+		              React.createElement("button", {className: "btn btn-default login-button"}, "LOG IN")
+
 		            )
 		          )
 		       )
+		       ), 
+		       React.createElement("div", {className: "col-md-6 new-user-container"}, 
+		          React.createElement("div", {id: "new-user-form"}, 
+		            React.createElement("form", {action: "/", onSubmit: this.handleNewUser}, 
+		              React.createElement("label", {className: "newUserLabel", htmlFor: "userInput"}, "Sign Up For DevChat!"), 
+		              React.createElement("input", {type: "text", id: "newEmailInput", className: "form-control", name: "email", placeholder: "email address"}), 
+		              React.createElement("input", {type: "password", id: "newPasswordInput", className: "form-control", name: "password", placeholder: "password"}), 
+		              React.createElement("button", {className: "btn btn-default login-button"}, "LOG IN")
+
+		            )
+		          )
+		       )
+
        )
+
       )
 
 

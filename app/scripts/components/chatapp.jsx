@@ -5,8 +5,7 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 require('backbone-react-component');
 var Firebase = require('firebase');
-var myRootRef = new Firebase('https://popping-torch-6591.firebaseio.com/');
-require('reactfire');
+var ReactFireMixin = require('reactfire');
 
 //local
 var models = require('../models/message.js');
@@ -15,30 +14,39 @@ var RouterMixin = require('./mixins.js');
 
 // component that holds the state of the application
 var ChatApp = React.createClass({
-	mixins: [Backbone.React.Component.mixin],
+	mixins: [Backbone.React.Component.mixin, ReactFireMixin],
 
-	componentDidMount: function() {
-		setInterval(function(){
-				this.props.collection.fetch();
-		}.bind(this), 2000);
+	componentWillMount: function() {
+		//sets the endpoint in Firebase database
+		this.bindAsArray(new Firebase("https://popping-torch-6591.firebaseio.com/messages/"), "messages");
+
+
+		// setInterval(function(){
+		// 		this.props.collection.fetch();
+		// }.bind(this), 2000);
 
 
 	},
+	handleSubmit: function(text){
+
+  		this.firebaseRefs["messages"].push({ text: text });
+  		this.setState({text: ""});
+  },
 
 	render: function() {
 
 		return (
 			<div id="wrapper" className="chatApp col-md-6 col-md-offset-1">
 					<div id="menu">
-						<p className="welcome">Hello {this.props.model.get('username')}, welcome to DevChat!</p>
+						<p className="welcome">Hello {localStorage.getItem('username')}, welcome to DevChat!</p>
         		<p className="logout"><a id="exit" href="#">Logout</a></p>
         	</div>
 
 
 					<div id="chatbox" className="col-md-10 col-md-offset-1">
-						<MessageList messages={this.props.collection}/>
+						<MessageList messages={this.props.collection} fireBaseMessages={this.state.messages} />
 					</div>
-					<ChatForm model={this.props.model}/>
+					<ChatForm model={this.props.model} handleSubmit={this.handleSubmit}/>
 			</div>
 
 		);
@@ -49,12 +57,14 @@ var ChatApp = React.createClass({
 // the message ul
 
 var MessageList = React.createClass({
-	mixins: [Backbone.React.Component.mixin],
+	mixins: [Backbone.React.Component.mixin, ReactFireMixin],
 
 	render: function() {
-			var messageDetails = this.props.messages.map(function(msg) {
-						//var className = msg.attributes.username == this.props.msg.get('username')? 'right': 'left';
-            return (<Message key={msg.cid} msg={msg} />);
+
+			var messageDetails = this.props.fireBaseMessages.map(function(message) {
+				console.log("message" , message);
+
+            return (<Message key={message.cid} message={message} />);
 
         }.bind(this));
         return (
@@ -69,18 +79,15 @@ var MessageList = React.createClass({
 // the message li
 
 var Message = React.createClass({
-	mixins: [Backbone.React.Component.mixin],
+	mixins: [Backbone.React.Component.mixin, ReactFireMixin],
 	render: function() {
-			var messages = this.props.msg;
+
 
 			return (
+
 				 <li className='message'>
-				 				<div className="avatar">
-				 				    <span className='userAvatar'> <img src={this.props.msg.get("user_avatar")} /> </span>
-				 				</div>
-                <span className='messageTime'> at {this.props.msg.get('time')}</span>
-                <span className='username'> {this.props.msg.get('username')} said: </span>
-                <span className='messageText'> {this.props.msg.get('content')}</span>
+
+                <span className='messageText'> {this.props.message.text}</span>
          	</li>
 		);
 	}
@@ -89,31 +96,45 @@ var Message = React.createClass({
 // the form where message is written
 
 var ChatForm = React.createClass({
-		mixins: [Backbone.React.Component.mixin],
+		mixins: [Backbone.React.Component.mixin, ReactFireMixin],
+		getInitialState: function(){
+    return {
+      text: ''
+    };
+  },
 		handleSubmit: function(e){
 			e.preventDefault();
-			var date = new Date();
-			var chatData = {
+			var text = this.state.text;
+			this.props.handleSubmit(text);
+  		this.setState({text: ""});
 
-				content: $('#usermsg').val(),
-				username: this.props.model.get("username"),
-				time: date.getHours() + ":" + ("0" + date.getMinutes()).slice(-2),
-				user_avatar: this.props.model.get("user_avatar")
-			};
+			// e.preventDefault();
+			// var date = new Date();
+			// var chatData = {
+
+			// 	content: $('#usermsg').val(),
+			// 	username: this.props.model.get("username"),
+			// 	time: date.getHours() + ":" + ("0" + date.getMinutes()).slice(-2),
+			// 	user_avatar: this.props.model.get("user_avatar")
 
 
 
-			console.log(chatData);
 
-			this.getCollection().create(chatData);
-			$('#usermsg').val('');
+			// console.log(chatData);
 
+			// this.getCollection().create(chatData);
+			// $('#usermsg').val('');
+
+		},
+		handleText: function(e){
+			e.preventDefault();
+			this.setState({text: e.target.value});
 		},
 
 		render: function() {
 			return (
 				<form onSubmit={this.handleSubmit} name="message">
-						<input name="usermsg" type="text" id="usermsg" size="63" />
+						<input onChange={this.handleText} value={this.state.text} name="usermsg" type="text" id="usermsg" size="63" />
 						<button  name="submitmsg" className="btn btn-success submit-btn" type="submit" id="submitmsg">Send</button>
 				</form>
 			);
