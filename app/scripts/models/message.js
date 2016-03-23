@@ -11,10 +11,12 @@ var Message = Backbone.Model.extend({
 	},
 	idAttribute: '_id',
 
+
 });
 var MessageCollection = Backbone.Collection.extend({
   model: Message,
-  url: 'http://tiny-lasagna-server.herokuapp.com/collections/messages/'
+  url: 'http://tiny-lasagna-server.herokuapp.com/collections/messages/',
+
   //'http://tiny-lasagna-server.herokuapp.com/collections/ironchat/'
 });
 

@@ -19,22 +19,23 @@ var MessageList = appComponents.MessageList;
 var ChatForm = appComponents.ChatForm;
 var LoginRoute = loginComponent.LoginComponent;
 
+messages.comparator = 'sent_time';
+
+
 var Router = Backbone.Router.extend({
   routes: {
     '': 'login',
-    'chat/:username' : 'chat'
+    'chat/' : 'chat'
   },
 
 	chat: function(username){
 
-  		if(username){
+
   			ReactDOM.render(
 			<ChatApp collection={messages} model={User} />,
-			$('#app')[0]
-	 	);
-	 } else {
-	 		Backbone.history.navigate('', {trigger: true});
-	 }
+			$('#app')[0] );
+
+
 	},
 
   login: function() {

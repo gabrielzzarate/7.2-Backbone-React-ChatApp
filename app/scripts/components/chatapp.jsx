@@ -4,6 +4,9 @@ var ReactDOM = require('react-dom');
 var Backbone = require('backbone');
 var _ = require('underscore');
 require('backbone-react-component');
+var Firebase = require('firebase');
+var myRootRef = new Firebase('https://popping-torch-6591.firebaseio.com/');
+require('reactfire');
 
 //local
 var models = require('../models/message.js');
@@ -50,12 +53,12 @@ var MessageList = React.createClass({
 
 	render: function() {
 			var messageDetails = this.props.messages.map(function(msg) {
+						//var className = msg.attributes.username == this.props.msg.get('username')? 'right': 'left';
             return (<Message key={msg.cid} msg={msg} />);
-            //add key, map over items in collection
-        });
-        return (
 
-            <ul className='messagesList'>
+        }.bind(this));
+        return (
+            <ul className='messagesList className'>
                 {messageDetails}
             </ul>
 		);
