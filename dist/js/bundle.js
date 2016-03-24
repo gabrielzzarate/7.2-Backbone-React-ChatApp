@@ -215,9 +215,7 @@ var LoginComponent = React.createClass({displayName: "LoginComponent",
 		return (
 			React.createElement("div", {className: "login-screen"}, 
 			React.createElement("div", {id: "login", className: "container-fluid"}, 
-		      React.createElement("div", {id: "intro-panel"}
-
-		      ), 
+		      React.createElement("div", {className: "col-md-6"}, 
 		      React.createElement("div", {id: "intro-box"}, 
 		        React.createElement("div", {className: "login-box-header"}, 
 		          React.createElement("span", {className: "logo"}, React.createElement("i", {className: "fa fa-commenting fa-5x"})), 
@@ -235,7 +233,8 @@ var LoginComponent = React.createClass({displayName: "LoginComponent",
 		            )
 		          )
 		       )
-		       ), 
+		       )
+		      ), 
 		       React.createElement("div", {className: "col-md-6 new-user-container"}, 
 		          React.createElement("div", {id: "new-user-form"}, 
 		            React.createElement("form", {action: "/", onSubmit: this.handleNewUser}, 

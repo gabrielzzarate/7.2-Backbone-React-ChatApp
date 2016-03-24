@@ -61,9 +61,7 @@ var LoginComponent = React.createClass({
 		return (
 			<div className="login-screen">
 			<div id="login" className="container-fluid">
-		      <div id="intro-panel">
-
-		      </div>
+		      <div className="col-md-6">
 		      <div id="intro-box">
 		        <div className="login-box-header">
 		          <span className="logo"><i className="fa fa-commenting fa-5x"></i></span>
@@ -82,6 +80,7 @@ var LoginComponent = React.createClass({
 		          </div>
 		       </div>
 		       </div>
+		      </div>
 		       <div className="col-md-6 new-user-container">
 		          <div id="new-user-form">
 		            <form action="/" onSubmit={this.handleNewUser} >
