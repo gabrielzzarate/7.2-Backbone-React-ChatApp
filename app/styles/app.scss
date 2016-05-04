@@ -53,12 +53,16 @@ body {
     padding-bottom: 0;
     background-image: url('https://images.unsplash.com/photo-1454165205744-3b78555e5572?crop=entropy&dpr=2&fit=crop&fm=jpg&h=675&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1300');
     background-size: cover;
+   // background-repeat: no-repeat;
     //background-color: #512e92;
 }
 #intro-panel {
 
 
 
+}
+.input {
+    margin: 5px;
 }
 
 #intro-box {

@@ -34,9 +34,9 @@ var LoginComponent = React.createClass({
 		        <div id="login-view">
 		          <div id="login-form">
 		            <form action="/" onSubmit={this.handleChatView} >
-		              <label className="usernameLabel" htmlFor="userInput">Enter Username</label>
-		              <input type="text" id="userInput"  className="form-control" name="username" placeholder="username" />
-		              <input type="text" id="emailInput"  className="form-control" name="email" placeholder="email address" />
+		              <label className="usernameLabel" htmlFor="userInput">Enter Username / Password</label>
+		              <input type="text" id="userInput"  className="input form-control" name="username" placeholder="username" />
+		              <input type="password" id="emailInput"  className="input form-control" name="email" placeholder="password" />
 		              <button className="btn btn-default login-button">LOG IN</button>
 		            </form>
 		          </div>

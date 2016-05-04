@@ -164,9 +164,9 @@ var LoginComponent = React.createClass({displayName: "LoginComponent",
 		        React.createElement("div", {id: "login-view"}, 
 		          React.createElement("div", {id: "login-form"}, 
 		            React.createElement("form", {action: "/", onSubmit: this.handleChatView}, 
-		              React.createElement("label", {className: "usernameLabel", htmlFor: "userInput"}, "Enter Username"), 
-		              React.createElement("input", {type: "text", id: "userInput", className: "form-control", name: "username", placeholder: "username"}), 
-		              React.createElement("input", {type: "text", id: "emailInput", className: "form-control", name: "email", placeholder: "email address"}), 
+		              React.createElement("label", {className: "usernameLabel", htmlFor: "userInput"}, "Enter Username / Password"), 
+		              React.createElement("input", {type: "text", id: "userInput", className: "input form-control", name: "username", placeholder: "username"}), 
+		              React.createElement("input", {type: "password", id: "emailInput", className: "input form-control", name: "email", placeholder: "password"}), 
 		              React.createElement("button", {className: "btn btn-default login-button"}, "LOG IN")
 		            )
 		          )
